@@ -5,6 +5,7 @@ import torch.nn as nn
 import torch.optim as optim
 import torch.nn.functional as F
 import numpy as np
+import argh
 from tqdm import tqdm
 from typing import Any
 
@@ -107,9 +108,9 @@ def train_step(model, state_transitions, tgt, num_actions, device, gamma=0.99):
     return loss
 
 
-def main(test=False, chkp=None, device='cuda'):
+def main(name, test=False, chkp=None, device='cuda'):
     if not test:
-        wandb.init(project="dqn-pytorch", name='dqn-cartpole')
+        wandb.init(project="dqn-pytorch", name=name)
     # memory_size = 500000
     min_rb_size = 20000
     sample_size = 750
@@ -209,6 +210,7 @@ def main(test=False, chkp=None, device='cuda'):
 
 
 if __name__ == '__main__':
-    main(True, "models/8298464.pth")
+    argh.dispatch_command(main)
+    # main(True, "models/8298464.pth")
     # main(True, "models/6518513.pth")
-    # main(test=Fale)
+    # main(test=False)
