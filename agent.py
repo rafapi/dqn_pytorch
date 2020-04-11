@@ -37,7 +37,7 @@ class DQNAgent:
 
 
 class Model(nn.Module):
-    def __init__(self, obs_shape, num_actions):
+    def __init__(self, obs_shape, num_actions, lr=0.001):
         super(Model, self).__init__()
         self.obs_shape = obs_shape
         self.num_actions = num_actions
@@ -46,7 +46,7 @@ class Model(nn.Module):
                 torch.nn.ReLU(),
                 torch.nn.Linear(256, num_actions),
                 )
-        self.opt = optim.Adam(self.net.parameters(), lr=0.0001)
+        self.opt = optim.Adam(self.net.parameters(), lr=lr)
 
     def forward(self, x):
         return self.net(x)
@@ -113,6 +113,7 @@ def main(test=False, chkp=None, device='cuda'):
     # memory_size = 500000
     min_rb_size = 20000
     sample_size = 750
+    lr = 0.001
 
     # eps_min = 0.01
     eps_decay = 0.999999
@@ -123,7 +124,8 @@ def main(test=False, chkp=None, device='cuda'):
     env = gym.make('CartPole-v1')
     last_obs = env.reset()
 
-    m = Model(env.observation_space.shape, env.action_space.n).to(device)
+    m = Model(env.observation_space.shape,
+              env.action_space.n, lr=lr).to(device)
     if chkp is not None:
         m.load_state_dict(torch.load(chkp))
     tgt = Model(env.observation_space.shape, env.action_space.n).to(device)
